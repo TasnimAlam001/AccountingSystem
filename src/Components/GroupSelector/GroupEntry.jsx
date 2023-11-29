@@ -1,69 +1,163 @@
-import { useState } from 'react';
-import { FaPlus } from 'react-icons/fa';
+import { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const GroupEntry = () => {
   const [selectedGroup, setSelectedGroup] = useState('');
   const [selectedSubgroup, setSelectedSubgroup] = useState('');
   const [selectedOption, setSelectedOption] = useState('');
   const [selectedAdditionalOption, setSelectedAdditionalOption] = useState('');
-  const [customOptions, setCustomOptions] = useState([]);
-  const [optionList, setOptionList] = useState([]);
+  const [groupList, setGroupList] = useState(['Asset', 'Equity', 'Expenditure', 'Income', 'Liability']);
+  const [subgroupList, setSubgroupList] = useState(['Fixed Asset', 'Current Asset', 'Intangible Asset']);
+  const [optionList, setOptionList] = useState(['Building', 'Machinery', 'Equipment']);
   const [additionalOptionList, setAdditionalOptionList] = useState([]);
-  const groups = ['Asset', 'Equity', 'Expenditure', 'Income', 'Liability'];
-  const subgroups = {
-    Asset: ['Fixed Asset', 'Current Asset'],
-    // Add subgroups for other groups as needed
+
+  // const subgroups = {
+  //   Asset: {
+  //     'Fixed Asset': ['Building', 'Machinery', 'Equipment'],
+  //     'Current Asset': ['Building', 'Machinery', 'Equipment'],
+  //     'Intangible Asset': ['Building', 'Machinery', 'Equipment'],
+  //   },
+  //   Equity: {
+  //     'Fixed Asset': ['Building', 'Machinery', 'Equipment'],
+  //     'Current Asset': ['Building', 'Machinery', 'Equipment'],
+  //     'Intangible Asset': ['Building', 'Machinery', 'Equipment'],
+  //   },
+  //   Expenditure: {
+  //     'Fixed Asset': ['Building', 'Machinery', 'Equipment'],
+  //     'Current Asset': ['Building', 'Machinery', 'Equipment'],
+  //     'Intangible Asset': ['Building', 'Machinery', 'Equipment'],
+  //   },
+  //   Income: {
+  //     'Fixed Asset': ['Building', 'Machinery', 'Equipment'],
+  //     'Current Asset': ['Building', 'Machinery', 'Equipment'],
+  //     'Intangible Asset': ['Building', 'Machinery', 'Equipment'],
+  //   },
+  //   Liability: {
+  //     'Fixed Asset': ['Building', 'Machinery', 'Equipment'],
+  //     'Current Asset': ['Building', 'Machinery', 'Equipment'],
+  //     'Intangible Asset': ['Building', 'Machinery', 'Equipment'],
+  //   },
+  // };
+
+  useEffect(() => {
+    // Load data from localStorage on component mount
+    const storedGroupList = JSON.parse(localStorage.getItem('groupList')) || ['Asset', 'Equity', 'Expenditure', 'Income', 'Liability'];
+    const storedSubgroupList = JSON.parse(localStorage.getItem('subgroupList')) || ['Fixed Asset', 'Current Asset', 'Intangible Asset'];
+    const storedOptionList = JSON.parse(localStorage.getItem('optionList')) || ['Building', 'Machinery', 'Equipment'];
+    const storedAdditionalOptionList = JSON.parse(localStorage.getItem('additionalOptionList')) || [];
+
+    setGroupList(storedGroupList);
+    setSubgroupList(storedSubgroupList);
+    setOptionList(storedOptionList);
+    setAdditionalOptionList(storedAdditionalOptionList);
+  }, []);
+
+
+  const saveToLocalStorage = () => {
+    // Save data to localStorage
+    localStorage.setItem('groupList', JSON.stringify(groupList));
+    localStorage.setItem('subgroupList', JSON.stringify(subgroupList));
+    localStorage.setItem('optionList', JSON.stringify(optionList));
+    localStorage.setItem('additionalOptionList', JSON.stringify(additionalOptionList));
   };
 
   const handleGroupChange = (e) => {
-    const selectedGroup = e.target.value;
-    setSelectedGroup(selectedGroup);
+    setSelectedGroup(e.target.value);
     setSelectedSubgroup('');
     setSelectedOption('');
     setSelectedAdditionalOption('');
   };
 
   const handleSubgroupChange = (e) => {
-    const selectedSubgroup = e.target.value;
-    setSelectedSubgroup(selectedSubgroup);
+    setSelectedSubgroup(e.target.value);
     setSelectedOption('');
     setSelectedAdditionalOption('');
   };
 
   const handleOptionChange = (e) => {
-    const selectedOption = e.target.value;
-    setSelectedOption(selectedOption);
+    setSelectedOption(e.target.value);
     setSelectedAdditionalOption('');
   };
 
-  const handleAdditionalOptionChange = (e) => {
-    const selectedAdditionalOption = e.target.value;
-    setSelectedAdditionalOption(selectedAdditionalOption);
-  };
+  const handleAddOption = async (index) => {
+    const fieldName =
+      index === 0
+        ? 'Select Subgroup'
+        : index === 1
+          ? 'Select Option'
+          : index === 2
+            ? 'Select Additional Option'
+            : 'Select Additional Option';
 
-  const handleAddOption = (index) => {
-    const newOption = prompt('Enter a new option:');
-    if (newOption) {
-      setCustomOptions([...customOptions, newOption]);
+    const newOption = await Swal.fire({
+      title: `Enter a new option for ${fieldName}:`,
+      input: 'text',
+      inputAttributes: {
+        autocapitalize: 'off',
+      },
+      showCancelButton: true,
+      confirmButtonText: 'Add',
+      showLoaderOnConfirm: true,
+      preConfirm: (value) => {
+        if (!value) {
+          Swal.showValidationMessage('Please enter a valid option');
+        }
+        return value;
+      },
+      allowOutsideClick: () => !Swal.isLoading(),
+    });
 
-      if (index === 0) {
-        // For "Select Option"
-        setOptionList([...optionList, newOption]);
-      } else {
-        // For "Select Additional Option"
-        setAdditionalOptionList([...additionalOptionList, newOption]);
+    if (newOption.isConfirmed) {
+      const existingOptions =
+        index === 0
+          ? subgroupList
+          : index === 1
+            ? optionList
+            : index === 2
+              ? additionalOptionList
+              : additionalOptionList;
+
+      const updatedOptions = [...existingOptions, newOption.value];
+
+      switch (index) {
+        case 0:
+          setSubgroupList(updatedOptions);
+          break;
+        case 1:
+          setOptionList(updatedOptions);
+          break;
+        case 2:
+          setAdditionalOptionList(updatedOptions);
+          break;
+        case 3:
+          setAdditionalOptionList(updatedOptions);
+          break;
+        default:
+          break;
       }
+
+      saveToLocalStorage();
+      saveToLocalStorage();
+
+      toast.success(`Option "${newOption.value}" added successfully!`);
     }
   };
+
+
+
 
   const handleClearForm = () => {
     setSelectedGroup('');
     setSelectedSubgroup('');
     setSelectedOption('');
     setSelectedAdditionalOption('');
-    setCustomOptions([]);
-    setOptionList([]);
+    setGroupList(['Asset', 'Equity', 'Expenditure', 'Income', 'Liability']);
+    setSubgroupList(['Fixed Asset', 'Current Asset', 'Intangible Asset']);
+    setOptionList(['Building', 'Machinery', 'Equipment']);
     setAdditionalOptionList([]);
+    localStorage.clear();
   };
 
   return (
@@ -76,12 +170,17 @@ const GroupEntry = () => {
           onChange={handleGroupChange}
         >
           <option value="">Select a group</option>
-          {groups.map((group) => (
+          {groupList.map((group) => (
             <option key={group} value={group}>
               {group}
             </option>
           ))}
         </select>
+        {/* {selectedGroup && (
+          <div onClick={() => handleAddOption()} className="ml-2 cursor-pointer px-4 py-2 text-black bg-white border rounded-md">
+            Add Option
+          </div>
+        )} */}
       </div>
 
       {selectedGroup && (
@@ -94,16 +193,16 @@ const GroupEntry = () => {
               onChange={handleSubgroupChange}
             >
               <option value="">Select a subgroup</option>
-              {subgroups[selectedGroup].map((subgroup) => (
+
+              {subgroupList.map((subgroup) => (
                 <option key={subgroup} value={subgroup}>
                   {subgroup}
                 </option>
               ))}
             </select>
-            {selectedSubgroup && (
-              <div className="ml-2 cursor-pointer px-4 py-2 text-black bg-white border rounded-md">
-
-                <FaPlus  onClick={() => handleAddOption(1)} />
+            {selectedGroup && (
+              <div onClick={() => handleAddOption(0)} className="ml-2 cursor-pointer px-4 py-2 text-black bg-white border rounded-md">
+                Add Option
               </div>
             )}
           </div>
@@ -120,19 +219,15 @@ const GroupEntry = () => {
               onChange={handleOptionChange}
             >
               <option value="">Select an option</option>
-              {optionList.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
+              {
+                optionList.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
             </select>
-            <div className="ml-2 flex-shrink-0">
-              <button
-                className="ml-2 cursor-pointer px-4 py-2 text-black bg-white border rounded-md"
-                onClick={() => handleAddOption(0)} // Pass index 0 for "Select Option"
-              >
-                <FaPlus></FaPlus>
-              </button>
+            <div onClick={() => handleAddOption(1)} className="ml-2 cursor-pointer px-4 py-2 text-black bg-white border rounded-md">
+              Add Option
             </div>
           </div>
         </div>
@@ -147,7 +242,7 @@ const GroupEntry = () => {
             <select
               className="mt-1 p-2 border rounded-md w-full"
               value={selectedAdditionalOption}
-              onChange={handleAdditionalOptionChange}
+              onChange={(e) => setSelectedAdditionalOption(e.target.value)}
             >
               <option value="">Select an additional option</option>
               {additionalOptionList.map((option) => (
@@ -156,13 +251,8 @@ const GroupEntry = () => {
                 </option>
               ))}
             </select>
-            <div className="ml-2 flex-shrink-0">
-              <button
-                className="ml-2 cursor-pointer px-4 py-2 text-black bg-white border rounded-md"
-                onClick={() => handleAddOption(1)} // Pass index 1 for "Select Additional Option"
-              >
-                <FaPlus></FaPlus>
-              </button>
+            <div onClick={() => handleAddOption(2)} className="ml-2 cursor-pointer px-4 py-2 text-black bg-white border rounded-md">
+              Add Option
             </div>
           </div>
         </div>
@@ -179,3 +269,12 @@ const GroupEntry = () => {
 };
 
 export default GroupEntry;
+
+
+
+
+
+
+
+
+
