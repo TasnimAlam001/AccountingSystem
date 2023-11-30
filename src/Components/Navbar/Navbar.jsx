@@ -127,7 +127,7 @@ const Navbar = () => {
                             </IconButton>
                         </div>
                         <div className='justify-end '>
-                            <Typography  noWrap component='div'>
+                            <Typography noWrap component='div'>
                                 <div className=' flex gap-5 '>
                                     <Link to="/">Home</Link>
                                     <p className='cursor-pointer'>Accounts</p>
@@ -189,7 +189,7 @@ const Navbar = () => {
                                             justifyContent: "center",
                                         }}
                                     >
-                                        {index % 2 === 0 ? <FaPlus /> : <MailIcon />}
+                                        {index % 2 === 0 ? <FaPlus  onClick={handleDrawerOpen}/> : <MailIcon />}
                                     </ListItemIcon>
                                     <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
                                 </ListItemButton>
@@ -199,7 +199,7 @@ const Navbar = () => {
                             <ListItem disablePadding sx={{ display: "block" }}>
                                 <ListItemButton
                                     component={Link}
-                                    to="/groupEntry"
+                                    to="/home"
                                     sx={{
                                         minHeight: 48,
                                         justifyContent: open ? "initial" : "center",
@@ -209,7 +209,7 @@ const Navbar = () => {
                                     {/* No icon before the "Group" button */}
                                     <ListItemText
                                         primary="Group Entry"
-                                        sx={{ opacity: open ? 1 : 0 , paddingLeft: '4px'}}
+                                        sx={{ opacity: open ? 1 : 0, paddingLeft: '4px' }}
                                     />
                                 </ListItemButton>
                             </ListItem>
@@ -219,12 +219,14 @@ const Navbar = () => {
 
                     <Divider />
                 </Drawer>
-                <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+                <Box component="main" sx={{ flexGrow: 1, p: 3}}>
                     <DrawerHeader />
 
                     <Typography paragraph>
                         {location.pathname === "/" && <p className="text-2xl">Welcome to Accounting System</p>}
-                        <Outlet></Outlet>
+                        <div className="">
+                            <Outlet></Outlet>
+                        </div>
 
                     </Typography>
                 </Box>

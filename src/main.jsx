@@ -7,9 +7,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import Navbar from './Components/Navbar/Navbar';
-// import GroupEntry from './Components/Home/GroupEntry/GroupEntry';
-// import GroupSelector from './Components/GroupSelector/GroupEntry';
-import GroupEntry from './Components/GroupSelector/GroupEntry';
+import Home from './Components/Home/Home';
 
 
 const router = createBrowserRouter([
@@ -18,8 +16,8 @@ const router = createBrowserRouter([
     element: <Navbar></Navbar>,
     children:[
       {
-        path:"/groupEntry",
-        element:<GroupEntry></GroupEntry>
+        path:"/home",
+        element: <Home></Home>
 
       }
     ]
