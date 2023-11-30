@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { FaPlus } from 'react-icons/fa';
 
 const GroupEntry = () => {
   const [selectedGroup, setSelectedGroup] = useState('');
@@ -52,16 +53,36 @@ const GroupEntry = () => {
     setSubgroupList(storedSubgroupList);
     setOptionList(storedOptionList);
     setAdditionalOptionList(storedAdditionalOptionList);
+
+    // You can add more code here to set other state values based on you
   }, []);
 
 
   const saveToLocalStorage = () => {
     // Save data to localStorage
-    localStorage.setItem('groupList', JSON.stringify(groupList));
-    localStorage.setItem('subgroupList', JSON.stringify(subgroupList));
-    localStorage.setItem('optionList', JSON.stringify(optionList));
-    localStorage.setItem('additionalOptionList', JSON.stringify(additionalOptionList));
+    console.log("Saving to local storage...");
+
+    console.log("subgroupList:", subgroupList);
+    console.log("optionList:", optionList);
+    console.log("additionalOptionList:", additionalOptionList);
+
+    window.localStorage.setItem('subgroupList', JSON.stringify(subgroupList));
+    window.localStorage.setItem('optionList', JSON.stringify(optionList));
+    window.localStorage.setItem('additionalOptionList', JSON.stringify(additionalOptionList));
+
+    setSelectedGroup("");
+    setSelectedSubgroup("");
+    setSelectedOption("");
+    setSelectedAdditionalOption("");
+
+    Swal.fire({
+      title: 'Option saved Successfully!',
+      
+      icon: 'success',
+      confirmButtonText: 'OK',
+    });
   };
+
 
   const handleGroupChange = (e) => {
     setSelectedGroup(e.target.value);
@@ -138,8 +159,9 @@ const GroupEntry = () => {
           break;
       }
 
+
       saveToLocalStorage();
-      saveToLocalStorage();
+
 
       toast.success(`Option "${newOption.value}" added successfully!`);
     }
@@ -153,11 +175,11 @@ const GroupEntry = () => {
     setSelectedSubgroup('');
     setSelectedOption('');
     setSelectedAdditionalOption('');
-    setGroupList(['Asset', 'Equity', 'Expenditure', 'Income', 'Liability']);
-    setSubgroupList(['Fixed Asset', 'Current Asset', 'Intangible Asset']);
-    setOptionList(['Building', 'Machinery', 'Equipment']);
+    setGroupList([]);
+    setSubgroupList([]);
+    setOptionList([]);
     setAdditionalOptionList([]);
-    localStorage.clear();
+
   };
 
   return (
@@ -176,11 +198,7 @@ const GroupEntry = () => {
             </option>
           ))}
         </select>
-        {/* {selectedGroup && (
-          <div onClick={() => handleAddOption()} className="ml-2 cursor-pointer px-4 py-2 text-black bg-white border rounded-md">
-            Add Option
-          </div>
-        )} */}
+      
       </div>
 
       {selectedGroup && (
@@ -201,9 +219,9 @@ const GroupEntry = () => {
               ))}
             </select>
             {selectedGroup && (
-              <div onClick={() => handleAddOption(0)} className="ml-2 cursor-pointer px-4 py-2 text-black bg-white border rounded-md">
-                Add Option
-              </div>
+              <button onClick={() => handleAddOption(0)} className="ml-2 cursor-pointer px-4 py-2 text-black bg-white border rounded-md">
+                <FaPlus></FaPlus>
+              </button>
             )}
           </div>
         </div>
@@ -226,9 +244,9 @@ const GroupEntry = () => {
                   </option>
                 ))}
             </select>
-            <div onClick={() => handleAddOption(1)} className="ml-2 cursor-pointer px-4 py-2 text-black bg-white border rounded-md">
-              Add Option
-            </div>
+            <button onClick={() => handleAddOption(1)} className="ml-2 cursor-pointer px-4 py-2 text-black bg-white border rounded-md">
+              <FaPlus></FaPlus>
+            </button>
           </div>
         </div>
       )}
@@ -251,9 +269,9 @@ const GroupEntry = () => {
                 </option>
               ))}
             </select>
-            <div onClick={() => handleAddOption(2)} className="ml-2 cursor-pointer px-4 py-2 text-black bg-white border rounded-md">
-              Add Option
-            </div>
+            <button onClick={() => handleAddOption(2)} className="ml-2 cursor-pointer px-4 py-2 text-black bg-white border rounded-md">
+              <FaPlus></FaPlus>
+            </button>
           </div>
         </div>
       )}
